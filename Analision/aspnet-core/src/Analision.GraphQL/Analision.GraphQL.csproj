@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props"></Import>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <RootNamespace>Analision</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GraphQL" Version="8.5.0" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="8.5.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="8.5.0" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="8.2.0" />
+    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="8.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Analision.Application.Shared\Analision.Application.Shared.csproj" />
+    <ProjectReference Include="..\Analision.Core\Analision.Core.csproj" />
+  </ItemGroup>
+</Project>

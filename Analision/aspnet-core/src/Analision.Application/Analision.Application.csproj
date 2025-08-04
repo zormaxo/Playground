@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props"></Import>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <AssemblyName>Analision.Application</AssemblyName>
+    <PackageId>Analision.Application</PackageId>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RootNamespace>Analision</RootNamespace>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MiniExcel" Version="1.41.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Analision.Application.Shared\Analision.Application.Shared.csproj" />
+    <ProjectReference Include="..\Analision.Core\Analision.Core.csproj" />
+    <ProjectReference Include="..\Analision.EntityFrameworkCore\Analision.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+</Project>

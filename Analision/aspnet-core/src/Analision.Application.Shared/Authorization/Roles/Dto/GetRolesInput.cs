@@ -1,0 +1,9 @@
+using System.Collections.Generic;
+
+namespace Analision.Authorization.Roles.Dto;
+
+public class GetRolesInput
+{
+    public List<string> Permissions { get; set; }
+}
+
