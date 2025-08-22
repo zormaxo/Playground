@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "compounds": [
+      {
+        "name": "Launch API and Console App",
+        "configurations": ["Launch Web API", "Launch Console App"]
+      }
+    ],
+    "configurations": [
+      {
+        "name": "Launch Web API",
+        "type": "dotnet",
+        "request": "launch",
+        "projectPath": "${workspaceFolder}\\WebAppTask.Api\\WebAppTask.Api.csproj",
+        "launchConfigurationId": "TargetFramework=;WebAppTask.Api"
+      },
+      {
+        "name": "Launch Console App",
+        "type": "dotnet",
+        "request": "launch",
+        "projectPath": "${workspaceFolder}\\WebAppTask.ConsoleApp\\WebAppTask.ConsoleApp.csproj",
+        "launchConfigurationId": "TargetFramework=;WebAppTask.ConsoleApp"
+      }
+    ]
+  }
+  

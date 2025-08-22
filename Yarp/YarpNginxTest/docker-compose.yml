@@ -1,0 +1,28 @@
+services:
+  hello.api:
+    image: ${DOCKER_REGISTRY-}hello.api
+    build:
+      context: .
+      dockerfile: Hello.Api/Dockerfile
+
+  yarp.proxy:
+    image: ${DOCKER_REGISTRY-}yarpproxy
+    build:
+      context: .
+      dockerfile: Yarp.Proxy/Dockerfile
+    ports:
+      - 3000:8080
+    depends_on:
+      - hello.api
+
+  nginx.proxy:
+    image: nginx:alpine
+    ports:
+      - 3001:80
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx:/usr/share/nginx/html:ro
+    depends_on:
+      - hello.api
+
+

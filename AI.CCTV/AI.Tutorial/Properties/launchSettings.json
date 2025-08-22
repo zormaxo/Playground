@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AI.Tutorial": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

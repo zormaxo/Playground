@@ -1,0 +1,59 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+services:
+  webapi1:
+    image: webapi1-image
+    container_name: webapi1-container
+    build:
+      context: .
+      dockerfile: Web.Api1/Dockerfile
+    ports:
+      - 7072:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+
+  webapi2:
+    image: webapi2-image
+    container_name: webapi2-container
+    build:
+      context: .
+      dockerfile: Web.Api2/Dockerfile
+    ports:
+      - 7073:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+
+  webapi3:
+    image: webapi3-image
+    container_name: webapi3-container
+    build:
+      context: .
+      dockerfile: Web.Api3/Dockerfile
+    ports:
+      - 7074:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+
+  yarploadbalancer:
+    image: yarploadbalancer-image
+    container_name: yarploadbalancer-container
+    build:
+      context: .
+      dockerfile: Yarp.LoadBalancer/Dockerfile
+    ports:
+      - 5044:7070 # HTTP
+      - 5443:7071 # HTTPS
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:7071;http://+:7070
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=YarpDevPassword123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+    depends_on:
+      - webapi1
+      - webapi2
+      - webapi3
