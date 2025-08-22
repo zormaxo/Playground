@@ -1,94 +1,45 @@
-﻿using Microsoft.Extensions.AI;
+﻿using AI.Net;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-// Build the host with dependency injection
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(
-        (context, services) =>
-        {
-            // Get OpenAI API key from environment
-            var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+// .NET 9 Modern Top-Level Statements Pattern
+var builder = Host.CreateApplicationBuilder(args);
 
-            if (string.IsNullOrWhiteSpace(openAIApiKey))
-            {
-                throw new InvalidOperationException(
-                    "OPENAI_API_KEY environment variable is not set."
-                );
-            }
+// User Secrets configuration
+builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
 
-            // Register ChatClient with OpenAI
-            services.AddChatClient(services =>
-                new OpenAI.Chat.ChatClient("gpt-4o-mini", openAIApiKey).AsIChatClient()
-            );
+// Get configuration values with error handling
+var openAiApiKey =
+    builder.Configuration["OpenAI:ApiKey"]
+    ?? throw new InvalidOperationException(
+        "OpenAI API key not found. Please set it using: dotnet user-secrets set OpenAI:ApiKey <your-key>"
+    );
+var openAiModel = builder.Configuration["OpenAI:Model"] ?? "gpt-4o-mini";
 
-            // Register our chat service
-            services.AddScoped<IChatService, ChatService>();
-        }
-    )
-    .Build();
+// Register services with Microsoft.Extensions.AI
+builder.Services.AddChatClient(new OpenAI.Chat.ChatClient(openAiModel, openAiApiKey).AsIChatClient());
+builder.Services.AddSingleton<IChatService, ChatService>();
+builder.Services.AddHostedService<ChatHostedService>();
 
-// Get the chat service and run the chat
-using var scope = host.Services.CreateScope();
-var chatService = scope.ServiceProvider.GetRequiredService<IChatService>();
-var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+// Build the host
+var host = builder.Build();
+
+// Log startup information
+var logger = host.Services.GetRequiredService<ILogger<Program>>();
+var environment = host.Services.GetRequiredService<IHostEnvironment>();
+
+logger.LogInformation("� Application starting in {Environment} environment", environment.EnvironmentName);
+logger.LogInformation("🤖 Using OpenAI model: {Model}", openAiModel);
 
 try
 {
-    logger.LogInformation("Starting AI Chat Console Application");
-    await chatService.StartChatAsync();
+    await host.RunAsync();
 }
 catch (Exception ex)
 {
-    logger.LogError(ex, "An error occurred while running the chat application");
-}
-
-// Interface for our chat service
-public interface IChatService
-{
-    Task StartChatAsync();
-}
-
-// Implementation of our chat service
-public class ChatService(IChatClient chatClient, ILogger<ChatService> logger) : IChatService
-{
-    public async Task StartChatAsync()
-    {
-        logger.LogInformation("Chat service started. Type 'exit' to quit.");
-        Console.WriteLine("=== AI Chat Console ===");
-        Console.WriteLine("Type your message and press Enter. Type 'exit' to quit.");
-        Console.WriteLine();
-
-        while (true)
-        {
-            Console.Write("You: ");
-            var userInput = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(userInput))
-                continue;
-
-            if (userInput.Equals("exit", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Goodbye!");
-                break;
-            }
-
-            try
-            {
-                logger.LogDebug("Sending message to AI: {Message}", userInput);
-
-                var response = await chatClient.GetResponseAsync(userInput);
-
-                Console.WriteLine($"AI: {response}");
-                Console.WriteLine();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error occurred while getting AI response");
-                Console.WriteLine("Sorry, an error occurred while processing your request.");
-                Console.WriteLine();
-            }
-        }
-    }
+    logger.LogCritical(ex, "❌ Application failed to start");
+    Environment.Exit(1);
 }
