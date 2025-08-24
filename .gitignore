@@ -482,4 +482,10 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Video files
 **/*.mp4
+
+# All build artifacts (including nested repositories)
+**/obj/
+**/bin/
